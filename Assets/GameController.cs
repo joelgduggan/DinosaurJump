@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     public Transform spawnPoint;
     public Transform endPoint;
     public GameObject logPrefab;
+    public GameObject rockPrefab;
     public GameObject gameOverTextObject;
     public TextMeshProUGUI scoreText;
 
@@ -76,7 +77,9 @@ public class GameController : MonoBehaviour
 
     private void SpawnNewEnemy()
     {
-        GameObject log = Instantiate(logPrefab, transform);
+        GameObject prefab = Random.Range(0,2) == 0 ? logPrefab : rockPrefab;
+
+        GameObject log = Instantiate(prefab, transform);
         log.transform.position = spawnPoint.position;
         enemies.Add(log);
     }

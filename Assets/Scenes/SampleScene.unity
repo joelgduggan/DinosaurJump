@@ -694,6 +694,7 @@ MonoBehaviour:
   spawnPoint: {fileID: 1565474324}
   endPoint: {fileID: 1697778708}
   logPrefab: {fileID: 1999790318780505382, guid: 2d08714ad923748eb898165fae2dbdc2, type: 3}
+  rockPrefab: {fileID: 3584347811778182356, guid: 665adf0ed601845a996d3a7b855a1ef2, type: 3}
   gameOverTextObject: {fileID: 141245472}
   scoreText: {fileID: 2110374707}
 --- !u!4 &1950624087
