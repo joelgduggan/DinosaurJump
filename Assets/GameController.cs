@@ -15,6 +15,9 @@ public class GameController : MonoBehaviour
     public GameObject rockPrefab;
     public GameObject gameOverTextObject;
     public TextMeshProUGUI scoreText;
+    public AudioClip deathSound;
+    public AudioClip jumpSound;
+    public AudioSource audioSource;
 
     private int score = 0;
     private float groundY;
@@ -55,6 +58,7 @@ public class GameController : MonoBehaviour
             {
                 isJumping = true;
                 dinosaurYVelocity = jumpVelocity;
+                audioSource.PlayOneShot(jumpSound);
             }
         }
         else
@@ -72,7 +76,7 @@ public class GameController : MonoBehaviour
 
     private void ResetTimeToSpawnNewEnemy()
     {
-        timeToSpawnNewEnemy = Time.time + Random.Range(1f, 3f);
+        timeToSpawnNewEnemy = Time.time + Random.Range(0.5f, 2.5f);
     }
 
     private void SpawnNewEnemy()
@@ -134,8 +138,9 @@ public class GameController : MonoBehaviour
             Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
             if (playerCollider.IsTouching(enemyCollider))
             {
-                gameOverTextObject.SetActive(true);
                 gameOver = true;
+                gameOverTextObject.SetActive(true);
+                audioSource.PlayOneShot(deathSound);
             }
         }
     }
