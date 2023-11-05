@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -12,10 +13,13 @@ public class GameController : MonoBehaviour
     public Transform endPoint;
     public GameObject logPrefab;
     public GameObject gameOverTextObject;
+    public TextMeshProUGUI scoreText;
 
+    private int score = 0;
     private float groundY;
     private bool isJumping = false;
     private float dinosaurYVelocity = 0f;
+    private bool gameOver = false;
 
     private List<GameObject> enemies = new List<GameObject>();// if you die say you do that man.
     private float timeToSpawnNewEnemy;
@@ -27,14 +31,19 @@ public class GameController : MonoBehaviour
         gameOverTextObject.SetActive(false);
 
         ResetTimeToSpawnNewEnemy();
+
+        UpdateScoreText();
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdatePlayer();
-        UpdateEnemies();
-        CheckForCollisions();
+        if (gameOver == false)
+        {
+            UpdatePlayer();
+            UpdateEnemies();
+            CheckForCollisions();
+        }
     }
 
     private void UpdatePlayer()
@@ -83,7 +92,19 @@ public class GameController : MonoBehaviour
         List<GameObject> enemiesToDestroy = new List<GameObject>();
         foreach (GameObject enemy in enemies)
         {
+            float dinosaurLeftEdge = dinosaur.GetComponent<SpriteRenderer>().bounds.min.x;
+            float enemyRightEdgeBefore = enemy.GetComponent<SpriteRenderer>().bounds.max.x;
+
             enemy.transform.position += Vector3.left * Time.deltaTime * enemySpeed;
+
+            float enemyRightEdgeAfter = enemy.GetComponent<SpriteRenderer>().bounds.max.x;
+            
+            // check if the right edge of the enemy is past the left edge of the dinosaur
+            if (enemyRightEdgeBefore > dinosaurLeftEdge && enemyRightEdgeAfter < dinosaurLeftEdge)
+            {
+                score++;
+                UpdateScoreText();
+            }
 
             if (enemy.transform.position.x < endPoint.position.x)
             {
@@ -97,6 +118,11 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private void UpdateScoreText()
+    {
+        scoreText.text = $"Score: {score}";
+    }
+
     private void CheckForCollisions()
     {
         Collider2D playerCollider = dinosaur.GetComponent<Collider2D>();
@@ -106,6 +132,7 @@ public class GameController : MonoBehaviour
             if (playerCollider.IsTouching(enemyCollider))
             {
                 gameOverTextObject.SetActive(true);
+                gameOver = true;
             }
         }
     }
