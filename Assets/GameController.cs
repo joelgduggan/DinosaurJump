@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     public Transform spawnPoint;
     public Transform endPoint;
     public GameObject logPrefab;
+    public GameObject gameOverTextObject;
 
     private float groundY;
     private bool isJumping = false;
@@ -23,6 +24,8 @@ public class GameController : MonoBehaviour
     {
         groundY = dinosaur.position.y;
 
+        gameOverTextObject.SetActive(false);
+
         ResetTimeToSpawnNewEnemy();
     }
 
@@ -31,6 +34,7 @@ public class GameController : MonoBehaviour
     {
         UpdatePlayer();
         UpdateEnemies();
+        CheckForCollisions();
     }
 
     private void UpdatePlayer()
@@ -90,6 +94,19 @@ public class GameController : MonoBehaviour
         {
             enemies.Remove(enemyToDestroy);
             Destroy(enemyToDestroy);//if you get a socore of 9999999 say you won dog
+        }
+    }
+
+    private void CheckForCollisions()
+    {
+        Collider2D playerCollider = dinosaur.GetComponent<Collider2D>();
+        foreach (GameObject enemy in enemies)
+        {
+            Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
+            if (playerCollider.IsTouching(enemyCollider))
+            {
+                gameOverTextObject.SetActive(true);
+            }
         }
     }
 }
