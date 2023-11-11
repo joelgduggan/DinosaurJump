@@ -18,12 +18,14 @@ public class GameController : MonoBehaviour
     public GameObject boulderPrefab;
     public GameObject gameOverTextObject;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI highScoreText;
     public Button restartButton;
     public AudioClip deathSound;
     public AudioClip jumpSound;
     public AudioSource audioSource;
 
     private int score = 0;
+    private int highScore = 0;
     private float groundY;
     private bool isJumping = false;
     private float dinosaurYVelocity = 0f;
@@ -32,13 +34,16 @@ public class GameController : MonoBehaviour
     private List<GameObject> enemies = new List<GameObject>();// if you die say you do that man.
     private float timeToSpawnNewEnemy;
 
-    private Graphic gameOverTextGraphic;
+    private TextMeshProUGUI gameOverText;
+
+    private string defaultGameOverTextString;
 
     void Awake()
     {
         groundY = dinosaur.position.y;
 
-        gameOverTextGraphic = gameOverTextObject.GetComponent<TextMeshProUGUI>();
+        gameOverText = gameOverTextObject.GetComponent<TextMeshProUGUI>();
+        defaultGameOverTextString = gameOverText.text;
 
         restartButton.onClick.AddListener(delegate 
         {
@@ -103,8 +108,19 @@ public class GameController : MonoBehaviour
 
         LeanTween.value(0f, 1f, 1f).setLoopPingPong().setOnUpdate(delegate(float t)
         {
-            gameOverTextGraphic.color = Color.HSVToRGB(t, 1f, 1f);
+            gameOverText.color = Color.HSVToRGB(t, 1f, 1f);
         });
+
+        if (score > highScore)
+        {
+            highScore = score;
+            UpdateScoreText();
+            gameOverText.text = "New High Score!";
+        }
+        else
+        {
+            gameOverText.text = defaultGameOverTextString;
+        }
     }
 
     private void UpdatePlayer()
@@ -192,6 +208,7 @@ public class GameController : MonoBehaviour
     private void UpdateScoreText()
     {
         scoreText.text = $"Score: {score}";
+        highScoreText.text = $"High Score: {highScore}";
     }
 
     private void CheckForCollisions()
