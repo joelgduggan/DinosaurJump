@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public Transform endPoint;
     public GameObject logPrefab;
     public GameObject rockPrefab;
+    public GameObject boulderPrefab;
     public GameObject gameOverTextObject;
     public TextMeshProUGUI scoreText;
     public Button restartButton;
@@ -137,7 +138,14 @@ public class GameController : MonoBehaviour
 
     private void SpawnNewEnemy()
     {
-        GameObject prefab = UnityEngine.Random.Range(0,2) == 0 ? logPrefab : rockPrefab;
+        int selection = UnityEngine.Random.Range(0,3);
+        GameObject prefab = null;
+        switch (selection)
+        {
+            case 0 : prefab = logPrefab;        break;
+            case 1 : prefab = rockPrefab;       break;
+            case 2 : prefab = boulderPrefab;    break;
+        }
 
         GameObject log = Instantiate(prefab, transform);
         log.transform.position = spawnPoint.position;
