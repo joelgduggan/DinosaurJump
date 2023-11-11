@@ -39,7 +39,6 @@ public class GameController : MonoBehaviour
         UpdateScoreText();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (gameOver == false)
@@ -54,7 +53,7 @@ public class GameController : MonoBehaviour
     {
         if (isJumping == false)
         {
-            if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
+            if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || Input.GetMouseButton(0))
             {
                 isJumping = true;
                 dinosaurYVelocity = jumpVelocity;
