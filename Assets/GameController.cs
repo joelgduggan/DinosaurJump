@@ -49,9 +49,10 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
+        UpdatePlayer();
+
         if (gameOver == false)
         {
-            UpdatePlayer();
             UpdateEnemies();
             CheckForCollisions();
         }
@@ -63,6 +64,7 @@ public class GameController : MonoBehaviour
 
         isJumping = false;
         dinosaur.position = new Vector3(dinosaur.position.x, groundY, dinosaur.position.z);
+        dinosaurYVelocity = 0f;
 
         restartButton.gameObject.SetActive(false);
 
@@ -86,6 +88,8 @@ public class GameController : MonoBehaviour
     {
         gameOver = true;
 
+        dinosaurYVelocity = jumpVelocity;
+
         gameOverTextObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
 
@@ -104,7 +108,7 @@ public class GameController : MonoBehaviour
 
     private void UpdatePlayer()
     {
-        if (isJumping == false)
+        if (isJumping == false && gameOver == false)
         {
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow) || Input.GetMouseButton(0))
             {
@@ -118,7 +122,7 @@ public class GameController : MonoBehaviour
             dinosaurYVelocity += gravity * Time.deltaTime;
             dinosaur.position += dinosaurYVelocity * Vector3.up * Time.deltaTime;
 
-            if (dinosaur.position.y < groundY)
+            if (dinosaur.position.y < groundY && gameOver == false)
             {
                 dinosaur.position = new Vector3(dinosaur.position.x, groundY, dinosaur.position.z);
                 isJumping = false;
