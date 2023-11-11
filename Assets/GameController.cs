@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameController : MonoBehaviour
     public GameObject rockPrefab;
     public GameObject gameOverTextObject;
     public TextMeshProUGUI scoreText;
+    public Button restartButton;
     public AudioClip deathSound;
     public AudioClip jumpSound;
     public AudioSource audioSource;
@@ -32,11 +34,12 @@ public class GameController : MonoBehaviour
     {
         groundY = dinosaur.position.y;
 
-        gameOverTextObject.SetActive(false);
+        restartButton.onClick.AddListener(delegate 
+        {
+            StartNewGame();
+        });
 
-        ResetTimeToSpawnNewEnemy();
-
-        UpdateScoreText();
+        StartNewGame();
     }
 
     void Update()
@@ -47,6 +50,28 @@ public class GameController : MonoBehaviour
             UpdateEnemies();
             CheckForCollisions();
         }
+    }
+
+    private void StartNewGame()
+    {
+        gameOver = false;
+
+        isJumping = false;
+        dinosaur.position = new Vector3(dinosaur.position.x, groundY, dinosaur.position.z);
+
+        gameOverTextObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+
+        ResetTimeToSpawnNewEnemy();
+
+        score = 0;
+        UpdateScoreText();
+
+        foreach (GameObject enemy in enemies)
+        {
+            Destroy(enemy);
+        }
+        enemies.Clear();
     }
 
     private void UpdatePlayer()
@@ -139,6 +164,7 @@ public class GameController : MonoBehaviour
             {
                 gameOver = true;
                 gameOverTextObject.SetActive(true);
+                restartButton.gameObject.SetActive(true);
                 audioSource.PlayOneShot(deathSound);
             }
         }
