@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -30,9 +31,13 @@ public class GameController : MonoBehaviour
     private List<GameObject> enemies = new List<GameObject>();// if you die say you do that man.
     private float timeToSpawnNewEnemy;
 
+    private Graphic gameOverTextGraphic;
+
     void Awake()
     {
         groundY = dinosaur.position.y;
+
+        gameOverTextGraphic = gameOverTextObject.GetComponent<TextMeshProUGUI>();
 
         restartButton.onClick.AddListener(delegate 
         {
@@ -59,7 +64,6 @@ public class GameController : MonoBehaviour
         isJumping = false;
         dinosaur.position = new Vector3(dinosaur.position.x, groundY, dinosaur.position.z);
 
-        gameOverTextObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
 
         ResetTimeToSpawnNewEnemy();
@@ -72,6 +76,30 @@ public class GameController : MonoBehaviour
             Destroy(enemy);
         }
         enemies.Clear();
+
+        LeanTween.cancel(gameOverTextObject);
+        gameOverTextObject.SetActive(false);
+        gameOverTextObject.transform.localScale = Vector3.one;
+    }
+
+    private void OnGameOver()
+    {
+        gameOver = true;
+
+        gameOverTextObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
+
+        audioSource.PlayOneShot(deathSound);
+
+        LeanTween.scale(gameOverTextObject, new Vector3(1.25f, 1.25f, 1f), 0.25f).setLoopPingPong();
+
+        gameOverTextObject.transform.localRotation = Quaternion.Euler(0f, 0f, 3f);
+        LeanTween.rotateZ(gameOverTextObject, -3, 0.5f).setLoopPingPong();
+
+        LeanTween.value(0f, 1f, 1f).setLoopPingPong().setOnUpdate(delegate(float t)
+        {
+            gameOverTextGraphic.color = Color.HSVToRGB(t, 1f, 1f);
+        });
     }
 
     private void UpdatePlayer()
@@ -100,12 +128,12 @@ public class GameController : MonoBehaviour
 
     private void ResetTimeToSpawnNewEnemy()
     {
-        timeToSpawnNewEnemy = Time.time + Random.Range(0.5f, 2.5f);
+        timeToSpawnNewEnemy = Time.time + UnityEngine.Random.Range(0.65f, 2.5f);
     }
 
     private void SpawnNewEnemy()
     {
-        GameObject prefab = Random.Range(0,2) == 0 ? logPrefab : rockPrefab;
+        GameObject prefab = UnityEngine.Random.Range(0,2) == 0 ? logPrefab : rockPrefab;
 
         GameObject log = Instantiate(prefab, transform);
         log.transform.position = spawnPoint.position;
@@ -162,10 +190,7 @@ public class GameController : MonoBehaviour
             Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
             if (playerCollider.IsTouching(enemyCollider))
             {
-                gameOver = true;
-                gameOverTextObject.SetActive(true);
-                restartButton.gameObject.SetActive(true);
-                audioSource.PlayOneShot(deathSound);
+                OnGameOver();
             }
         }
     }
