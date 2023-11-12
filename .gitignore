@@ -6,3 +6,5 @@ UserSettings
 obj
 Packages
 Logs
+Assembly-CSharp-Editor.csproj
+Assembly-CSharp.csproj
