@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
     public Button restartButton;
+    public TextMeshProUGUI restartButtonText;
     public AudioClip deathSound;
     public AudioClip jumpSound;
     public AudioSource audioSource;
@@ -32,6 +33,7 @@ public class GameController : MonoBehaviour
     private float groundY;
     private bool isJumping = false;
     private float dinosaurYVelocity = 0f;
+    private bool gameStarted = false;
     private bool gameOver = false;
 
     private List<GameObject> enemies = new List<GameObject>();// if you die say you do that man.
@@ -46,19 +48,21 @@ public class GameController : MonoBehaviour
 		backgroundMaterial = new Material(backgroundMaterial);
 		backgroundMeshRenderer.material = backgroundMaterial;
     
-        groundY = dinosaur.position.y;
+		groundY = dinosaur.position.y;
 
         gameOverText = gameOverTextObject.GetComponent<TextMeshProUGUI>();
+        gameOverTextObject.SetActive(false);
         defaultGameOverTextString = gameOverText.text;
 
         restartButton.onClick.AddListener(delegate 
         {
             StartNewGame();
         });
+		restartButtonText.text = "Start";
 
         highScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
 
-        StartNewGame();
+		gameOver = true;
     }
 
     void Update()
@@ -77,6 +81,7 @@ public class GameController : MonoBehaviour
     private void StartNewGame()
     {
         gameOver = false;
+        gameStarted = true;
 
         isJumping = false;
         dinosaur.position = new Vector3(dinosaur.position.x, groundY, dinosaur.position.z);
@@ -98,6 +103,8 @@ public class GameController : MonoBehaviour
         LeanTween.cancel(gameOverTextObject);
         gameOverTextObject.SetActive(false);
         gameOverTextObject.transform.localScale = Vector3.one;
+        
+        restartButtonText.text = "Restart";
     }
 
     private void OnGameOver()
@@ -145,7 +152,7 @@ public class GameController : MonoBehaviour
                 audioSource.PlayOneShot(jumpSound);
             }
         }
-        else
+        else if (gameStarted)
         {
             dinosaurYVelocity += gravity * Time.deltaTime;
             dinosaur.position += dinosaurYVelocity * Vector3.up * Time.deltaTime;

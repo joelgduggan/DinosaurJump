@@ -1169,6 +1169,7 @@ MonoBehaviour:
   scoreText: {fileID: 2110374707}
   highScoreText: {fileID: 82667134}
   restartButton: {fileID: 669555585}
+  restartButtonText: {fileID: 807874517}
   deathSound: {fileID: 8300000, guid: 87fa7bde321e241ed99156d198a1635e, type: 3}
   jumpSound: {fileID: 8300000, guid: 79c55b93af15347aa94c720a735b79aa, type: 3}
   audioSource: {fileID: 1950624088}
