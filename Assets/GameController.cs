@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour
     public AudioClip deathSound;
     public AudioClip jumpSound;
     public AudioSource audioSource;
+    public Material backgroundMaterial;
 
     private int score = 0;
     private int highScore = 0;
@@ -64,6 +65,8 @@ public class GameController : MonoBehaviour
         {
             UpdateEnemies();
             CheckForCollisions();
+
+            backgroundMaterial.SetTextureOffset("_MainTex", new Vector2(Time.time * 0.25f, 0f));
         }
     }
 
