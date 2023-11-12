@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     public float jumpVelocity = 10f;
     public float gravity = -1f;
     public float enemySpeed = 3f;
+    public float backgroundSpeed = 1f;
     public Transform spawnPoint;
     public Transform endPoint;
     public GameObject logPrefab;
@@ -23,6 +24,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI restartButtonText;
     public AudioClip deathSound;
     public AudioClip jumpSound;
+    public AudioClip scoreSound;
     public AudioSource audioSource;
     public MeshRenderer backgroundMeshRenderer;
     public Material backgroundMaterial;
@@ -74,7 +76,7 @@ public class GameController : MonoBehaviour
             UpdateEnemies();
             CheckForCollisions();
 
-            backgroundMaterial.SetTextureOffset("_MainTex", new Vector2(Time.time * 0.25f, 0f));
+            backgroundMaterial.SetTextureOffset("_MainTex", new Vector2(Time.time * backgroundSpeed, 0f));
         }
     }
 
@@ -209,6 +211,7 @@ public class GameController : MonoBehaviour
             {
                 score++;
                 UpdateScoreText();
+                audioSource.PlayOneShot(scoreSound);
             }
 
             if (enemy.transform.position.x < endPoint.position.x)
