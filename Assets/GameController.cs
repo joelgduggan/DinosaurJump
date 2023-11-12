@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
     public AudioSource audioSource;
     public MeshRenderer backgroundMeshRenderer;
     public Material backgroundMaterial;
+    public ParticleSystem deathParticleSystem;
 
     private int score = 0;
     private int highScore = 0;
@@ -84,9 +85,11 @@ public class GameController : MonoBehaviour
     {
         gameOver = false;
         gameStarted = true;
-
         isJumping = false;
-        dinosaur.position = new Vector3(dinosaur.position.x, groundY, dinosaur.position.z);
+        
+        Vector3 pos = dinosaur.position;
+        dinosaur.position = new Vector3(pos.x, groundY, pos.z);
+        
         dinosaurYVelocity = 0f;
 
         restartButton.gameObject.SetActive(false);
@@ -129,6 +132,9 @@ public class GameController : MonoBehaviour
         {
             gameOverText.color = Color.HSVToRGB(t, 1f, 1f);
         });
+        
+        deathParticleSystem.transform.position = dinosaur.position;
+        deathParticleSystem.Play();
 
         if (score > highScore)
         {
