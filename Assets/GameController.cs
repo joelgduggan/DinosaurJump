@@ -46,6 +46,8 @@ public class GameController : MonoBehaviour
 
     private string defaultGameOverTextString;
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     void Awake()
     {
 		backgroundMaterial = new Material(backgroundMaterial);
@@ -68,6 +70,8 @@ public class GameController : MonoBehaviour
 		gameOver = true;
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     void Update()
     {
         UpdatePlayer();
@@ -81,6 +85,8 @@ public class GameController : MonoBehaviour
         }
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     private void StartNewGame()
     {
         gameOver = false;
@@ -149,6 +155,8 @@ public class GameController : MonoBehaviour
         }
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     private void UpdatePlayer()
     {
         if (isJumping == false && gameOver == false)
@@ -194,6 +202,8 @@ public class GameController : MonoBehaviour
         enemies.Add(log);
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     private void UpdateEnemies()
     {
         if (timeToSpawnNewEnemy < Time.time)
@@ -232,12 +242,16 @@ public class GameController : MonoBehaviour
         }
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     private void UpdateScoreText()
     {
         scoreText.text = $"Score: {score}";
         highScoreText.text = $"High Score: {highScore}";
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     private void CheckForCollisions()
     {
         Collider2D playerCollider = dinosaur.GetComponent<Collider2D>();
