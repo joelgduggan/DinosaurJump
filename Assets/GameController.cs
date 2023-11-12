@@ -26,6 +26,7 @@ public class GameController : MonoBehaviour
 
     private int score = 0;
     private int highScore = 0;
+    private const string HIGH_SCORE_KEY = "highScore";
     private float groundY;
     private bool isJumping = false;
     private float dinosaurYVelocity = 0f;
@@ -49,6 +50,8 @@ public class GameController : MonoBehaviour
         {
             StartNewGame();
         });
+
+        highScore = PlayerPrefs.GetInt(HIGH_SCORE_KEY, 0);
 
         StartNewGame();
     }
@@ -116,6 +119,7 @@ public class GameController : MonoBehaviour
             highScore = score;
             UpdateScoreText();
             gameOverText.text = "New High Score!";
+            PlayerPrefs.SetInt(HIGH_SCORE_KEY, highScore);
         }
         else
         {
