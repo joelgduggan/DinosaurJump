@@ -1172,6 +1172,7 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 87fa7bde321e241ed99156d198a1635e, type: 3}
   jumpSound: {fileID: 8300000, guid: 79c55b93af15347aa94c720a735b79aa, type: 3}
   audioSource: {fileID: 1950624088}
+  backgroundMeshRenderer: {fileID: 862447633}
   backgroundMaterial: {fileID: 2100000, guid: f05158b4952eb4c63b5decc570f4dc03, type: 2}
 --- !u!4 &1950624087
 Transform:

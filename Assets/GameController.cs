@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour
     public AudioClip deathSound;
     public AudioClip jumpSound;
     public AudioSource audioSource;
+    public MeshRenderer backgroundMeshRenderer;
     public Material backgroundMaterial;
 
     private int score = 0;
@@ -42,6 +43,9 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
+		backgroundMaterial = new Material(backgroundMaterial);
+		backgroundMeshRenderer.material = backgroundMaterial;
+    
         groundY = dinosaur.position.y;
 
         gameOverText = gameOverTextObject.GetComponent<TextMeshProUGUI>();
