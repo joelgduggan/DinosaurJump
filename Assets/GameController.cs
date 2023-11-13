@@ -5,6 +5,29 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+//-//////////////////////////////////////////////////////////////////////
+///
+public enum ItemType
+{
+	Enemy,
+	Coin
+}
+
+//-//////////////////////////////////////////////////////////////////////
+///
+public class Item
+{
+	public GameObject gameObject;
+	public ItemType itemType;
+
+	public Item(GameObject gameObject, ItemType itemType)
+	{
+		this.gameObject = gameObject;
+		this.itemType = itemType;
+	}
+}
+
 public class GameController : MonoBehaviour
 {
     public Transform dinosaur;
@@ -17,6 +40,7 @@ public class GameController : MonoBehaviour
     public GameObject logPrefab;
     public GameObject rockPrefab;
     public GameObject boulderPrefab;
+    public GameObject coinPrefab;
     public GameObject gameOverTextObject;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI highScoreText;
@@ -25,6 +49,7 @@ public class GameController : MonoBehaviour
     public AudioClip deathSound;
     public AudioClip jumpSound;
     public AudioClip scoreSound;
+    public AudioClip bigScoreSound;
     public AudioSource audioSource;
     public MeshRenderer backgroundMeshRenderer;
     public Material backgroundMaterial;
@@ -39,8 +64,8 @@ public class GameController : MonoBehaviour
     private bool gameStarted = false;
     private bool gameOver = false;
 
-    private List<GameObject> enemies = new List<GameObject>();// if you die say you do that man.
-    private float timeToSpawnNewEnemy;
+    private List<Item> items = new List<Item>();// if you die say you do that man.
+    private float timeToSpawnNewItem;
 
     private TextMeshProUGUI gameOverText;
 
@@ -78,7 +103,7 @@ public class GameController : MonoBehaviour
 
         if (gameOver == false)
         {
-            UpdateEnemies();
+            UpdateItems();
             CheckForCollisions();
 
             backgroundMaterial.SetTextureOffset("_MainTex", new Vector2(Time.time * backgroundSpeed, 0f));
@@ -100,16 +125,16 @@ public class GameController : MonoBehaviour
 
         restartButton.gameObject.SetActive(false);
 
-        ResetTimeToSpawnNewEnemy();
+        ResetTimeToSpawnNewItem();
 
         score = 0;
         UpdateScoreText();
 
-        foreach (GameObject enemy in enemies)
+        foreach (Item item in items)
         {
-            Destroy(enemy);
+            Destroy(item.gameObject);
         }
-        enemies.Clear();
+        items.Clear();
 
         LeanTween.cancel(gameOverTextObject);
         gameOverTextObject.SetActive(false);
@@ -118,6 +143,8 @@ public class GameController : MonoBehaviour
         restartButtonText.text = "Restart";
     }
 
+    //-//////////////////////////////////////////////////////////////////////
+    ///
     private void OnGameOver()
     {
         gameOver = true;
@@ -181,66 +208,97 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void ResetTimeToSpawnNewEnemy()
+    //-//////////////////////////////////////////////////////////////////////
+    ///
+    private void ResetTimeToSpawnNewItem()
     {
-        timeToSpawnNewEnemy = Time.time + UnityEngine.Random.Range(0.65f, 2.5f);
-    }
-
-    private void SpawnNewEnemy()
-    {
-        int selection = UnityEngine.Random.Range(0,3);
-        GameObject prefab = null;
-        switch (selection)
-        {
-            case 0 : prefab = logPrefab;        break;
-            case 1 : prefab = rockPrefab;       break;
-            case 2 : prefab = boulderPrefab;    break;
-        }
-
-        GameObject log = Instantiate(prefab, transform);
-        log.transform.position = spawnPoint.position;
-        enemies.Add(log);
+        timeToSpawnNewItem = Time.time + UnityEngine.Random.Range(0.65f, 2.5f);
     }
 
     //-//////////////////////////////////////////////////////////////////////
     ///
-    private void UpdateEnemies()
+    private void SpawnNewEnemy()
     {
-        if (timeToSpawnNewEnemy < Time.time)
+        int selection = UnityEngine.Random.Range(0,4);
+        GameObject prefab = null;
+        ItemType type = ItemType.Enemy;
+        switch (selection)
+        {
+            case 0 : prefab = logPrefab;
+					 type = ItemType.Enemy;
+					 break;
+            case 1 : prefab = rockPrefab;
+					 type = ItemType.Enemy;
+					 break;
+            case 2 : prefab = boulderPrefab;
+					 type = ItemType.Enemy;
+					 break;
+            case 3 : prefab = coinPrefab;
+					 type = ItemType.Coin;
+					 break;
+        }
+
+        GameObject log = Instantiate(prefab, transform);
+        log.transform.position = spawnPoint.position;
+        
+        items.Add(new Item(log, type));
+    }
+
+    //-//////////////////////////////////////////////////////////////////////
+    ///
+    private void UpdateItems()
+    {
+        if (timeToSpawnNewItem < Time.time)
         {
             SpawnNewEnemy();
-            ResetTimeToSpawnNewEnemy();
+            ResetTimeToSpawnNewItem();
         }
 
-        List<GameObject> enemiesToDestroy = new List<GameObject>();
-        foreach (GameObject enemy in enemies)
+        List<Item> itemsToDestroy = new List<Item>();
+        foreach (Item item in items)
         {
+	        GameObject itemObject = item.gameObject;
+	        
             float dinosaurLeftEdge = dinosaur.GetComponent<SpriteRenderer>().bounds.min.x;
-            float enemyRightEdgeBefore = enemy.GetComponent<SpriteRenderer>().bounds.max.x;
+            float itemRightEdgeBefore = itemObject.GetComponent<SpriteRenderer>().bounds.max.x;
 
-            enemy.transform.position += Vector3.left * Time.deltaTime * enemySpeed;
+            itemObject.transform.position += Vector3.left * Time.deltaTime * enemySpeed;
 
-            float enemyRightEdgeAfter = enemy.GetComponent<SpriteRenderer>().bounds.max.x;
+            float itemRightEdgeAfter = itemObject.GetComponent<SpriteRenderer>().bounds.max.x;
             
             // check if the right edge of the enemy is past the left edge of the dinosaur
-            if (enemyRightEdgeBefore > dinosaurLeftEdge && enemyRightEdgeAfter < dinosaurLeftEdge)
+            if (itemRightEdgeBefore > dinosaurLeftEdge && itemRightEdgeAfter < dinosaurLeftEdge)
             {
-                score++;
-                UpdateScoreText();
-                audioSource.PlayOneShot(scoreSound);
+				AddToScore(1);
             }
 
-            if (enemy.transform.position.x < endPoint.position.x)
+            if (itemObject.transform.position.x < endPoint.position.x)
             {
-                enemiesToDestroy.Add(enemy);
+                itemsToDestroy.Add(item);
             }
         }
-        foreach (GameObject enemyToDestroy in enemiesToDestroy)
+        foreach (Item item in itemsToDestroy)
         {
-            enemies.Remove(enemyToDestroy);
-            Destroy(enemyToDestroy);//if you get a socore of 9999999 say you won dog
+            items.Remove(item);
+            Destroy(item.gameObject);
         }
     }
+    
+    //-//////////////////////////////////////////////////////////////////////
+    ///
+    private void AddToScore(int amount)
+    {
+        score += amount;
+        UpdateScoreText();
+        
+        var clip = scoreSound;
+        if (amount > 1)
+        {
+	        clip = bigScoreSound;
+        }
+        
+        audioSource.PlayOneShot(clip);
+	}
 
     //-//////////////////////////////////////////////////////////////////////
     ///
@@ -255,13 +313,28 @@ public class GameController : MonoBehaviour
     private void CheckForCollisions()
     {
         Collider2D playerCollider = dinosaur.GetComponent<Collider2D>();
-        foreach (GameObject enemy in enemies)
+        List<Item> itemsToDestroy = new List<Item>();
+        
+        foreach (Item item in items)
         {
-            Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
-            if (playerCollider.IsTouching(enemyCollider))
+            Collider2D itemCollider = item.gameObject.GetComponent<Collider2D>();
+            if (playerCollider.IsTouching(itemCollider))
             {
-                OnGameOver();
+	            if (item.itemType == ItemType.Enemy)
+		        {
+					OnGameOver();
+				}
+	            else if (item.itemType == ItemType.Coin)
+	            {
+		            AddToScore(5);
+		            itemsToDestroy.Add(item);
+	            }
             }
+        }
+        foreach (Item item in itemsToDestroy)
+        {
+	        items.Remove(item);
+	        Destroy(item.gameObject);
         }
     }
 }

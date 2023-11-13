@@ -6036,6 +6036,7 @@ MonoBehaviour:
   logPrefab: {fileID: 1999790318780505382, guid: 2d08714ad923748eb898165fae2dbdc2, type: 3}
   rockPrefab: {fileID: 3584347811778182356, guid: 665adf0ed601845a996d3a7b855a1ef2, type: 3}
   boulderPrefab: {fileID: 8845595266035803766, guid: 986de15e0bb0d42d5bf16aef5c3ecf26, type: 3}
+  coinPrefab: {fileID: 6511491443015765956, guid: ceff20d5604fb462db655047f303449d, type: 3}
   gameOverTextObject: {fileID: 141245472}
   scoreText: {fileID: 2110374707}
   highScoreText: {fileID: 82667134}
@@ -6044,6 +6045,7 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 87fa7bde321e241ed99156d198a1635e, type: 3}
   jumpSound: {fileID: 8300000, guid: 79c55b93af15347aa94c720a735b79aa, type: 3}
   scoreSound: {fileID: 8300000, guid: 0803467e8c0694a7ebd2a2e8b7b6f1d4, type: 3}
+  bigScoreSound: {fileID: 8300000, guid: a7517dff79ca4404893261eb7d3069cb, type: 3}
   audioSource: {fileID: 1950624088}
   backgroundMeshRenderer: {fileID: 862447633}
   backgroundMaterial: {fileID: 2100000, guid: f05158b4952eb4c63b5decc570f4dc03, type: 2}
